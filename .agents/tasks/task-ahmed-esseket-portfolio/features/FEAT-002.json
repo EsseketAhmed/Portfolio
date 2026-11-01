@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Build the Sanity Studio sub-project at /studio: package.json, sanity.config.ts, all schemas (project, homePage, faq, siteSettings), and src/lib/ integration files (sanity.ts, queries.ts, imageUrl.ts). Independent of FEAT-003/004/005 in terms of Sanity schema content, but src/lib/ files are read by pages built in FEAT-004, so this FEAT must complete before FEAT-004.",
+  "status": "pending",
+  "steps": [
+    "1. Create studio/package.json with name '@ahmed-esseket/studio', version 1.0.0, scripts: {dev: 'sanity dev', build: 'sanity build', deploy: 'sanity deploy'}, dependencies: sanity@^3, react@^18, react-dom@^18, @sanity/vision@^3. File: studio/package.json",
+    "2. Create studio/tsconfig.json extending the root tsconfig with compilerOptions.rootDir='.' and include: ['./**/*.ts', './**/*.tsx']. File: studio/tsconfig.json",
+    "3. Create studio/sanity.config.ts importing defineConfig from 'sanity', structureTool from 'sanity/plugins/structure', visionTool from '@sanity/vision', and all schemas from './schemas'. Configure projectId from env PUBLIC_SANITY_PROJECT_ID, dataset from PUBLIC_SANITY_DATASET or 'production', plugins: [structureTool(), visionTool()], schema: { types: [project, homePage, faq, siteSettings] }. File: studio/sanity.config.ts",
+    "4. Create studio/schemas/project.ts: document type 'project' with fields: title (string, required), slug (slug, source: title, required), description (text), excerpt (string, max 200 chars), coverImage (image with alt text hotspot), gallery (array of images), tags (array of strings), client (string), year (number), liveUrl (url), githubUrl (url), order (number), featured (boolean), body (array of block content). File: studio/schemas/project.ts",
+    "5. Create studio/schemas/homePage.ts: document type 'homePage' (_id: 'homePage', singleton) with fields: heroHeadline (string), heroSubheadline (string), heroImages (array of image refs, max 3), marqueeItems (array of strings), aboutTitle (string), aboutBody (array of block content), socialLinks (array of objects with platform/url), ctaText (string), ctaUrl (string), featuredProjects (array of references to project). File: studio/schemas/homePage.ts",
+    "6. Create studio/schemas/faq.ts: document type 'faq' with fields: question (string, required), answer (array of block content), order (number). File: studio/schemas/faq.ts",
+    "7. Create studio/schemas/siteSettings.ts: document type 'siteSettings' (_id: 'siteSettings', singleton) with fields: siteName (string), siteDescription (text), seoImage (image), twitterHandle (string), email (string), navLinks (array of objects with label/href). File: studio/schemas/siteSettings.ts",
+    "8. Create studio/schemas/index.ts exporting all four schema types as a default array. File: studio/schemas/index.ts",
+    "9. Create src/lib/sanity.ts: import createClient from '@sanity/client', export a configured client using PUBLIC_SANITY_PROJECT_ID env var (import.meta.env.PUBLIC_SANITY_PROJECT_ID), dataset: 'production', apiVersion: '2024-01-01', useCdn: true. Also export a type-safe fetch helper. File: src/lib/sanity.ts",
+    "10. Create src/lib/imageUrl.ts: import imageUrlBuilder from '@sanity/image-url', import the sanity client, export a urlFor(source) helper function. File: src/lib/imageUrl.ts",
+    "11. Create src/lib/queries.ts: export GROQ query strings as TypeScript const: HOME_PAGE_QUERY (fetches homePage doc with dereferences), ALL_PROJECTS_QUERY (ordered by order asc), PROJECT_BY_SLUG_QUERY (param $slug), FAQ_QUERY (ordered by order asc), SITE_SETTINGS_QUERY. File: src/lib/queries.ts",
+    "12. Run: npm install in studio/ to install Sanity deps. From workspace root run: Set-Location studio; npm install; Set-Location .."
+  ],
+  "acceptance_criteria": [
+    "studio/package.json, studio/sanity.config.ts, studio/schemas/index.ts all exist",
+    "All four schema files exist in studio/schemas/",
+    "src/lib/sanity.ts, src/lib/queries.ts, src/lib/imageUrl.ts all exist",
+    "studio/node_modules/ exists after npm install",
+    "TypeScript in studio/schemas/ has no syntax errors (check via: npx tsc --noEmit --project studio/tsconfig.json)"
+  ],
+  "verification": [
+    "Set-Location 'c:\\Users\\essek\\Desktop\\Ahmed ess\\AHMEDESSEKETCOM\\studio'; npm install — must exit 0",
+    "Set-Location 'c:\\Users\\essek\\Desktop\\Ahmed ess\\AHMEDESSEKETCOM'; npx tsc --noEmit — should have no errors in src/lib/ files"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

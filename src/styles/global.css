@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Pr_1';
+  src: url('/fonts/Pr_1.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pr_2';
+  src: url('/fonts/Pr_2.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-accent: #E8FF00;
+  --color-dark: #0A0A0A;
+  --color-surface: #111111;
+}
+
+@layer base {
+  body {
+    @apply bg-dark text-white font-body;
+  }
+}

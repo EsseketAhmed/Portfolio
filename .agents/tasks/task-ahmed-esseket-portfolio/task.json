@@ -1,0 +1,7 @@
+{
+  "task_id": "task-ahmed-esseket-portfolio",
+  "task_description": "Build a premium creative portfolio site for Ahmed Esseket: Astro 5 SSG + React + TypeScript + Tailwind CSS + Motion for React + Sanity CMS (studio at /studio) + Cloudflare Pages deployment. All components, pages, schemas, SEO, and build verification included.",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005"],
+  "blocked_reason": null
+}

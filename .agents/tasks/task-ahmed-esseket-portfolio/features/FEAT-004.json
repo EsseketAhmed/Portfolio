@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Build all Astro pages (index.astro, projects/index.astro, projects/[slug].astro) wiring Sanity data fetching to UI components. Depends on FEAT-001 (project scaffold), FEAT-002 (src/lib/ files and GROQ queries), and FEAT-003 (all components). This is the integration step that brings everything together.",
+  "status": "pending",
+  "steps": [
+    "1. Create src/pages/index.astro: the home page. In frontmatter, import sanityClient and HOME_PAGE_QUERY, FAQ_QUERY, SITE_SETTINGS_QUERY from src/lib/. Fetch data at build time using await client.fetch(). Import and compose all sections: BaseLayout (wrap), Navbar, Hero (client:load, pass heroHeadline, heroImages), MarqueeGallery (client:load, pass marqueeItems), AboutSection (pass aboutTitle, aboutBody), ProjectsGrid (client:load, pass featuredProjects), FaqSection (pass faqs), ContactSection, Footer (pass siteSettings.navLinks). Handle case where Sanity data may be null (use fallback strings so the build never fails even without a live Sanity project). File: src/pages/index.astro",
+    "2. Create src/pages/projects/index.astro: the projects listing page. Fetches ALL_PROJECTS_QUERY. Renders BaseLayout > Navbar > a full-width heading section > ProjectsGrid (client:load, all projects) > Footer. File: src/pages/projects/index.astro",
+    "3. Create src/pages/projects/[slug].astro: the dynamic project detail page. Exports getStaticPaths() fetching ALL_PROJECTS_QUERY and returning each project as a path param. In page frontmatter, destructures Astro.props.project. Renders: BaseLayout (title=project.title, description=project.description), Navbar, a hero image (project.coverImage via urlFor), project metadata (year, client, tags, liveUrl, githubUrl), BlockRenderer for project.body, a back-to-projects link, Footer. File: src/pages/projects/[slug].astro",
+    "4. Create src/pages/404.astro: minimal 404 page using BaseLayout with a centered message and a link back to home. File: src/pages/404.astro",
+    "5. Update src/pages/index.astro to ensure all three Hero image imports reference the copied assets in src/assets/images/ using Astro's static import (import hero1 from '../assets/images/Hero_Chrome_1.png') so Vite processes them with content hashing. Pass .src strings to the Hero React component. Modify: src/pages/index.astro",
+    "6. Add font @font-face paths in src/styles/global.css to reference the assets at src/assets/fonts/Pr_1.ttf and src/assets/fonts/Pr_2.ttf using relative URLs that Astro/Vite resolves correctly: url('/fonts/Pr_1.ttf'). Also copy font files to public/fonts/ so they are served as static assets. Add Copy-Item step for Pr_1.ttf and Pr_2.ttf to public/fonts/. Modify: src/styles/global.css"
+  ],
+  "acceptance_criteria": [
+    "src/pages/index.astro, src/pages/projects/index.astro, src/pages/projects/[slug].astro all exist",
+    "getStaticPaths is exported from [slug].astro",
+    "All page imports resolve — no missing module errors",
+    "Pages use fallback data so they render even without a live Sanity connection"
+  ],
+  "verification": [
+    "Set-Location 'c:\\Users\\essek\\Desktop\\Ahmed ess\\AHMEDESSEKETCOM'; npm run build — must complete with exit code 0 and produce dist/ directory",
+    "Confirm dist/index.html exists and dist/projects/index.html exists after build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

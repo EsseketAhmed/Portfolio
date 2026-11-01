@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Scaffold the Astro project foundation: package.json, all config files, folder structure, move assets, install dependencies. This is the prerequisite for every other FEAT — nothing else can build until npm install succeeds.",
+  "status": "pending",
+  "steps": [
+    "1. Create root package.json with scripts (dev, build, preview), Astro 5 as main dependency, and all required deps: astro@^5, @astrojs/react@^4, @astrojs/tailwind@^5, @astrojs/sitemap@^3, react@^18, react-dom@^18, motion@^11, @sanity/client@^6, @sanity/image-url@^1, tailwindcss@^3, typescript@^5. Exact versions pinned to avoid drift. File: package.json",
+    "2. Create tsconfig.json with strict mode, JSX preserve for Astro, paths alias @/* -> src/*, and include src/**/* and studio/**/*. File: tsconfig.json",
+    "3. Create astro.config.mjs importing defineConfig from astro, react() from @astrojs/react, tailwind() from @astrojs/tailwind, sitemap() from @astrojs/sitemap. Set output: 'static', site: 'https://ahmedesseketcom.pages.dev', integrations array. File: astro.config.mjs",
+    "4. Create tailwind.config.mjs with content glob covering src/**/*.{astro,tsx,ts,js}, extend theme with: fontFamily (display: ['Pr_1', 'sans-serif'], body: ['Pr_2', 'sans-serif']), colors (accent: '#E8FF00', dark: '#0A0A0A', surface: '#111111'), and screen breakpoints. File: tailwind.config.mjs",
+    "5. Create src/styles/global.css with @tailwind base/components/utilities, @font-face declarations for Pr_1.ttf (font-family: 'Pr_1') and Pr_2.ttf (font-family: 'Pr_2'), CSS custom properties for the design tokens (--color-accent, --color-dark, --color-surface), and base body styles (bg-dark, text-white). File: src/styles/global.css",
+    "6. Create all required directories: src/assets/fonts/, src/assets/images/, src/components/react/, src/components/blocks/, src/layouts/, src/lib/, src/pages/projects/, public/",
+    "7. Copy (do NOT delete yet) the workspace-root assets into their new homes: Hero_Chrome_1.png -> src/assets/images/, Hero_Chrome_2.png -> src/assets/images/, Hero_Chrome_3.png -> src/assets/images/, Pr_1.ttf -> src/assets/fonts/, Pr_2.ttf -> src/assets/fonts/. Use PowerShell Copy-Item. After verifying npm run build succeeds in a later FEAT, the originals at root can remain (they are ignored by Astro).",
+    "8. Create .env.example with placeholders: PUBLIC_SANITY_PROJECT_ID=your_project_id, PUBLIC_SANITY_DATASET=production, SANITY_API_TOKEN=your_token. File: .env.example",
+    "9. Create .gitignore covering: node_modules/, dist/, .astro/, .env, studio/node_modules/, studio/.sanity/. File: .gitignore",
+    "10. Create public/robots.txt with User-agent: * / Allow: /. File: public/robots.txt",
+    "11. Run: npm install from workspace root to install all dependencies."
+  ],
+  "acceptance_criteria": [
+    "npm install completes with exit code 0",
+    "node_modules/ directory exists at workspace root",
+    "src/assets/fonts/ contains Pr_1.ttf and Pr_2.ttf",
+    "src/assets/images/ contains Hero_Chrome_1.png, Hero_Chrome_2.png, Hero_Chrome_3.png",
+    "astro.config.mjs, tailwind.config.mjs, tsconfig.json all exist and are valid JS/JSON"
+  ],
+  "verification": [
+    "cd 'c:\\Users\\essek\\Desktop\\Ahmed ess\\AHMEDESSEKETCOM'; npm install — must exit 0",
+    "npx astro check — should find no TypeScript errors (may warn about missing pages, which is acceptable at this stage)"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Build all UI components: BaseLayout, Navbar, Footer (Astro), and all React interactive components (Hero with parallax, MarqueeGallery, ProjectsGrid) plus all Astro section components (AboutSection, SocialSection, FaqSection, ContactSection) and the BlockRenderer with block sub-components. Depends on FEAT-001 (npm install done, assets moved). Independent of FEAT-002 (components use type interfaces, not live Sanity data — data is injected by pages in FEAT-004).",
+  "status": "pending",
+  "steps": [
+    "1. Create src/layouts/BaseLayout.astro: accepts props title, description, ogImage (optional). Imports global.css. Renders full HTML shell with <head> containing charset, viewport, title, meta description, og:title, og:description, og:image, canonical link, and preconnect to fonts. Body has <slot />. File: src/layouts/BaseLayout.astro",
+    "2. Create src/components/Navbar.astro: sticky top-0 navbar with site name/logo on left, nav links from a prop (or hardcoded: Home, Projects, About, Contact) on right. Mobile hamburger menu using a minimal inline <script> to toggle a class. Uses Tailwind classes only. File: src/components/Navbar.astro",
+    "3. Create src/components/Footer.astro: simple dark footer with copyright, social links passed as props, and a 'back to top' link. File: src/components/Footer.astro",
+    "4. Create src/components/react/Hero.tsx: a React client component ('use client' not needed — rendered with client:load). Imports motion from 'motion/react' (NOT framer-motion). Three parallax layers using useScroll + useTransform from 'motion/react' — Hero_Chrome_1 moves slowest (y: [0, -60px]), Hero_Chrome_2 medium, Hero_Chrome_3 fastest. Large headline text animates in with motion.div initial:{opacity:0,y:40} animate:{opacity:1,y:0}. Props: headline, subheadline, images (3 src strings). File: src/components/react/Hero.tsx",
+    "5. Create src/components/react/MarqueeGallery.tsx: React component that renders an infinitely scrolling horizontal marquee of text items. Uses CSS animation (animate-marquee defined in tailwind config) combined with motion/react for hover pause. Props: items (string[]). Duplicate the items array to create seamless loop. File: src/components/react/MarqueeGallery.tsx",
+    "6. Create src/components/react/ProjectsGrid.tsx: React component rendering a responsive grid of project cards. Each card shows coverImage (via urlFor), title, excerpt, tags, and a hover overlay with CTA. Uses motion/react motion.div with whileHover scale effect. Props: projects (array of Project type). File: src/components/react/ProjectsGrid.tsx",
+    "7. Create src/types/sanity.ts: TypeScript interfaces for all Sanity document types — Project, HomePage, Faq, SiteSettings, SanityImage, SanitySlug, SanityBlock. These interfaces are used by both components and pages. File: src/types/sanity.ts",
+    "8. Create src/components/AboutSection.astro: two-column layout (text left, decorative right). Accepts title and body (SanityBlock[]) props. Renders body via a simple inline portable text renderer for basic block types. File: src/components/AboutSection.astro",
+    "9. Create src/components/SocialSection.astro: grid of social platform links with large hover-animated icons/text. Accepts socialLinks prop. File: src/components/SocialSection.astro",
+    "10. Create src/components/FaqSection.astro: accordion FAQ using HTML <details>/<summary> elements (no JS framework needed). Each item shows question in summary, answer block in details. Accepts faqs prop. File: src/components/FaqSection.astro",
+    "11. Create src/components/ContactSection.astro: section with a contact form (name, email, message fields) styled with Tailwind. Form action can be a mailto: link or a Cloudflare Worker endpoint placeholder. Also shows direct email address. File: src/components/ContactSection.astro",
+    "12. Create src/components/blocks/BlockRenderer.astro: iterates over a SanityBlock[] array and dispatches to block-type-specific sub-components. Supports: block (paragraph/headings), image. File: src/components/blocks/BlockRenderer.astro",
+    "13. Create src/components/blocks/PortableTextBlock.astro: renders a single Sanity block-type node — headings (h1-h6), normal paragraphs, with inline marks (strong, em, underline, link). File: src/components/blocks/PortableTextBlock.astro",
+    "14. Create src/components/blocks/ImageBlock.astro: renders a Sanity image block with urlFor, alt text, and lazy loading. File: src/components/blocks/ImageBlock.astro",
+    "15. Add 'animate-marquee' keyframe to tailwind.config.mjs: extend theme.animation with 'marquee': 'marquee 30s linear infinite', and theme.keyframes with 'marquee': {'0%':{transform:'translateX(0)'},'100%':{transform:'translateX(-50%)'}}. Modify: tailwind.config.mjs"
+  ],
+  "acceptance_criteria": [
+    "All .astro component files exist in src/components/ and src/layouts/",
+    "All .tsx component files exist in src/components/react/",
+    "src/types/sanity.ts exports Project, HomePage, Faq, SiteSettings interfaces",
+    "No TypeScript errors in src/components/react/ files",
+    "Hero.tsx imports from 'motion/react', not 'framer-motion'"
+  ],
+  "verification": [
+    "Set-Location 'c:\\Users\\essek\\Desktop\\Ahmed ess\\AHMEDESSEKETCOM'; npx tsc --noEmit — zero errors in src/components/ and src/types/",
+    "grep -r 'framer-motion' src/ — should return no matches (all animation imports use motion/react)"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

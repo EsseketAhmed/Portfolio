@@ -1,0 +1,29 @@
+{
+  "name": "ahmedesseketcom",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "5.10.1",
+    "@astrojs/react": "4.2.0",
+    "@astrojs/tailwind": "5.1.4",
+    "@astrojs/sitemap": "3.2.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "motion": "11.18.2",
+    "@sanity/client": "6.28.4",
+    "@sanity/image-url": "1.1.0",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.8.3"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.5"
+  }
+}

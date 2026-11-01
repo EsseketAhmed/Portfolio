@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-005",
+  "type": "chore",
+  "description": "Finalization: SEO sitemap config, README, Cloudflare deployment config, and final npm run build verification. Depends on all prior FEATs. Independent features within this FEAT (README, wrangler.toml, sitemap) can be authored in any order.",
+  "status": "pending",
+  "steps": [
+    "1. Verify sitemap integration: @astrojs/sitemap is already in astro.config.mjs from FEAT-001. Confirm the site URL is set: site: 'https://ahmedesseketcom.pages.dev' (or placeholder). After build, dist/sitemap-index.xml and dist/sitemap-0.xml should exist. No code change needed if already configured — just verify.",
+    "2. Create wrangler.toml for Cloudflare Pages deployment config: name = 'ahmed-esseket-portfolio', compatibility_date = '2024-01-01', pages_build_output_dir = './dist'. File: wrangler.toml",
+    "3. Create README.md with sections: Project Overview, Tech Stack (list each: Astro 5, React 18, TypeScript, Tailwind CSS v3, Motion for React, Sanity CMS v3, Cloudflare Pages), Getting Started (npm install, set up .env from .env.example, npm run dev), Sanity Studio (cd studio && npm install && npm run dev), Build & Deploy (npm run build, wrangler pages deploy ./dist). File: README.md",
+    "4. Ensure .env.example is complete and matches all import.meta.env references in src/lib/sanity.ts. Cross-check that PUBLIC_SANITY_PROJECT_ID and PUBLIC_SANITY_DATASET are the only required env vars. File: .env.example (verify/update if needed)",
+    "5. Add a public/favicon.svg: a minimal SVG favicon with the letter 'A' in the accent color (#E8FF00) on a dark background (#0A0A0A). File: public/favicon.svg. Update BaseLayout.astro to link it: <link rel='icon' type='image/svg+xml' href='/favicon.svg' />",
+    "6. Final build run: from workspace root run npm run build. Confirm: exit code 0, dist/ exists, dist/index.html exists, dist/projects/ directory exists, no TypeScript errors printed. Record any warnings and resolve them.",
+    "7. Update FEAT status: after successful build, set this FEAT's status to 'completed' in its JSON file and record the build output summary in findings."
+  ],
+  "acceptance_criteria": [
+    "npm run build exits with code 0",
+    "dist/index.html exists",
+    "dist/projects/index.html exists",
+    "dist/sitemap-index.xml exists",
+    "wrangler.toml exists",
+    "README.md exists with all required sections",
+    "public/favicon.svg exists"
+  ],
+  "verification": [
+    "Set-Location 'c:\\Users\\essek\\Desktop\\Ahmed ess\\AHMEDESSEKETCOM'; npm run build — exit code must be 0",
+    "Test-Path 'dist/index.html' — must return True",
+    "Test-Path 'dist/sitemap-index.xml' — must return True"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
