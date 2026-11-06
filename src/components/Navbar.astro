@@ -1,0 +1,279 @@
+---
+const navLinks = [
+  { label: 'Home',            href: '/' },
+  { label: 'Sports Projects', href: '/sports' },
+  { label: 'Portfolio',       href: '/projects' },
+  { label: 'Contact',         href: '/contact' },
+]
+
+const currentPath = Astro.url.pathname
+---
+
+<header id="navbar" class="navbar">
+  <!-- Logo -->
+  <a href="/" class="navbar__logo" aria-label="Ahmed Esseket — Home">
+    <img src="/images/LOGO_ESSEKET.png" alt="" />
+  </a>
+
+  <!-- Desktop nav -->
+  <nav class="navbar__links" aria-label="Main navigation">
+    {navLinks.slice(0, -1).map(link => (
+      <a
+        href={link.href}
+        class:list={['navbar__link', { 'navbar__link--active': currentPath === link.href }]}
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+
+  <!-- CTA -->
+  <div class="navbar__actions">
+    <a href="/contact" class="navbar__cta gradient-border">
+      Contact
+    </a>
+
+    <!-- Hamburger -->
+    <button
+      id="hamburger"
+      class="navbar__hamburger"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile overlay -->
+<div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
+  <button id="close-menu" class="mobile-menu__close" aria-label="Close menu">✕</button>
+  <nav class="mobile-menu__links">
+    {navLinks.map(link => (
+      <a href={link.href} class="mobile-menu__link">{link.label}</a>
+    ))}
+  </nav>
+</div>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    background: transparent;
+    transition: background 0.4s ease, backdrop-filter 0.4s ease;
+  }
+
+  .navbar.scrolled {
+    background: rgba(9, 9, 9, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .navbar__logo {
+    display: block;
+    width: clamp(140px, 13vw, 190px);
+    flex-shrink: 0;
+  }
+
+  .navbar__logo img {
+    width: 100%;
+    height: auto;
+  }
+
+  .navbar__links {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .navbar__link {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(240, 240, 240, 0.65);
+    transition: color 0.25s ease;
+    position: relative;
+  }
+
+  .navbar__link::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--color-lavender);
+    transition: width 0.3s ease;
+  }
+
+  .navbar__link:hover,
+  .navbar__link--active {
+    color: #f0f0f0;
+  }
+
+  .navbar__link:hover::after,
+  .navbar__link--active::after {
+    width: 100%;
+  }
+
+  .navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .navbar__cta {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.25rem;
+    border-radius: 2px;
+    color: #f0f0f0;
+    transition: color 0.3s ease, transform 0.2s ease;
+  }
+
+  .navbar__cta:hover {
+    color: var(--color-pearl);
+    transform: translateY(-1px);
+  }
+
+  .navbar__hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: 4px;
+    cursor: pointer;
+  }
+
+  .navbar__hamburger span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: #f0f0f0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    border-radius: 1px;
+  }
+
+  /* ─── Mobile Menu ─────────────────────────────────────────── */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(9, 9, 9, 0.97);
+    backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .mobile-menu.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-menu__close {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    font-size: 1.25rem;
+    color: rgba(240, 240, 240, 0.5);
+    transition: color 0.2s ease;
+  }
+
+  .mobile-menu__close:hover {
+    color: #f0f0f0;
+  }
+
+  .mobile-menu__links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .mobile-menu__link {
+    font-family: 'Pr_1', sans-serif;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(240, 240, 240, 0.7);
+    transition: color 0.25s ease;
+  }
+
+  .mobile-menu__link:hover {
+    color: #f0f0f0;
+  }
+
+  @media (max-width: 768px) {
+    .navbar {
+      padding: 1rem 1.25rem;
+    }
+
+    .navbar__links {
+      display: none;
+    }
+
+    .navbar__cta {
+      display: none;
+    }
+
+    .navbar__hamburger {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  const navbar = document.getElementById('navbar')!
+  const hamburger = document.getElementById('hamburger')!
+  const closeBtn = document.getElementById('close-menu')!
+  const mobileMenu = document.getElementById('mobile-menu')!
+  const mobileLinks = mobileMenu.querySelectorAll('.mobile-menu__link')
+
+  // Scroll state
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40)
+  }, { passive: true })
+
+  // Open
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.add('open')
+    mobileMenu.setAttribute('aria-hidden', 'false')
+    hamburger.setAttribute('aria-expanded', 'true')
+    document.body.style.overflow = 'hidden'
+  })
+
+  // Close helpers
+  function closeMenu() {
+    mobileMenu.classList.remove('open')
+    mobileMenu.setAttribute('aria-hidden', 'true')
+    hamburger.setAttribute('aria-expanded', 'false')
+    document.body.style.overflow = ''
+  }
+
+  closeBtn.addEventListener('click', closeMenu)
+  mobileLinks.forEach(link => link.addEventListener('click', closeMenu))
+
+  // Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu()
+  })
+</script>

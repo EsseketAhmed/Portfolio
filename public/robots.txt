@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://ahmedesseket.com/sitemap-index.xml

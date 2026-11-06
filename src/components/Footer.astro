@@ -1,0 +1,189 @@
+---
+interface Props {
+  email?: string
+  socialLinks?: Array<{ platform: string; url: string; handle?: string }>
+  footerText?: string
+}
+
+const {
+  email = 'hello@ahmedesseket.com',
+  socialLinks = [],
+  footerText,
+} = Astro.props
+
+const year = new Date().getFullYear()
+
+const navLinks = [
+  { label: 'Home',             href: '/' },
+  { label: 'Sports Projects',  href: '/projects' },
+  { label: 'Portfolio',        href: '/projects' },
+  { label: 'Contact',          href: '/contact' },
+  { label: 'Legal Notice',     href: '/legal' },
+]
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <!-- Top row -->
+    <div class="footer__top">
+      <a href="/" class="footer__logo">
+        <img src="/images/LOGO_ESSEKET.png" alt="Ahmed Esseket" />
+      </a>
+
+      <nav class="footer__nav" aria-label="Footer navigation">
+        {navLinks.map(link => (
+          <a href={link.href} class="footer__nav-link">{link.label}</a>
+        ))}
+      </nav>
+
+      {socialLinks.length > 0 && (
+        <div class="footer__social">
+          {socialLinks.map(link => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer__social-link"
+              aria-label={link.platform}
+            >
+              {link.handle ?? link.platform}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Divider -->
+    <div class="footer__divider" aria-hidden="true"></div>
+
+    <!-- Bottom row -->
+    <div class="footer__bottom">
+      <p class="footer__copy">
+        &copy; {year}
+        <span class="gradient-text">Ahmed Esseket</span>.
+        All rights reserved.
+      </p>
+      {footerText && <p class="footer__tagline">{footerText}</p>}
+      {email && (
+        <a href={`mailto:${email}`} class="footer__email">{email}</a>
+      )}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--color-border);
+    padding: 3rem 0 2rem;
+    background: var(--color-bg);
+  }
+
+  .footer__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+
+  .footer__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .footer__logo {
+    display: block;
+    width: 150px;
+  }
+
+  .footer__logo img {
+    width: 100%;
+    height: auto;
+  }
+
+  .footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+  }
+
+  .footer__nav-link {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    transition: color 0.25s ease;
+  }
+
+  .footer__nav-link:hover {
+    color: var(--color-text);
+  }
+
+  .footer__social {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .footer__social-link {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    transition: color 0.25s ease;
+  }
+
+  .footer__social-link:hover {
+    color: var(--color-text);
+  }
+
+  .footer__divider {
+    height: 1px;
+    background: var(--color-border);
+    margin-bottom: 1.5rem;
+  }
+
+  .footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .footer__copy,
+  .footer__tagline,
+  .footer__email {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .footer__email {
+    transition: color 0.25s ease;
+  }
+
+  .footer__email:hover {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 768px) {
+    .footer__inner {
+      padding: 0 1.25rem;
+    }
+
+    .footer__top {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .footer__bottom {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

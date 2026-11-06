@@ -1,0 +1,93 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+  canonical?: string
+  noIndex?: boolean
+}
+
+const {
+  title = 'Ahmed Esseket — Graphic Designer & Art Director',
+  description = 'Ahmed Esseket is a graphic designer and art director specialising in sports graphics, football campaigns, visual identities and digital visual storytelling.',
+  ogImage = '/og-default.jpg',
+  canonical,
+  noIndex = false,
+} = Astro.props
+
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href
+const showIntro = Astro.url.pathname === '/'
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={canonicalUrl} />
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+    <meta property="og:site_name"   content="Ahmed Esseket" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/FAV_LOGO_ESSEKET.png" />
+
+    <!-- Font preloads -->
+    <link rel="preload" href="/fonts/Pr_1.ttf" as="font" type="font/truetype" crossorigin />
+    <link rel="preload" href="/fonts/Pr_2.ttf" as="font" type="font/truetype" crossorigin />
+  </head>
+
+  <body class:list={{ 'has-site-loader': showIntro }}>
+    {showIntro && (
+      <>
+        <div id="site-loader" class="site-loader" aria-hidden="true">
+          <div class="site-loader__glow">
+            <img src="/images/LOGO_ESSEKET.png" alt="" />
+          </div>
+          <div class="site-loader__progress"></div>
+        </div>
+        <script is:inline>
+          const loader = document.getElementById('site-loader')
+          if (loader) {
+            const introStartedAt = performance.now()
+            const minimumDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000
+
+            const hideLoader = () => {
+              const delay = Math.max(0, minimumDuration - (performance.now() - introStartedAt))
+              window.setTimeout(() => {
+                loader.classList.add('site-loader--hidden')
+                document.body.classList.remove('has-site-loader')
+                window.setTimeout(() => loader.remove(), 700)
+              }, delay)
+            }
+
+            if (document.readyState === 'complete') {
+              hideLoader()
+            } else {
+              window.addEventListener('load', hideLoader, { once: true })
+            }
+          }
+        </script>
+      </>
+    )}
+    <slot />
+  </body>
+</html>

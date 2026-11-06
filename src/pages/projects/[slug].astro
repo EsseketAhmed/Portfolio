@@ -1,0 +1,320 @@
+---
+import BaseLayout     from '../../layouts/BaseLayout.astro'
+import Navbar          from '../../components/Navbar.astro'
+import Footer          from '../../components/Footer.astro'
+import BlockRenderer   from '../../components/blocks/BlockRenderer.astro'
+import ContactSection  from '../../components/ContactSection.astro'
+
+import { sanityClient } from '../../lib/sanity'
+import { PROJECT_BY_SLUG_QUERY, ALL_PROJECTS_QUERY, SITE_SETTINGS_QUERY, HOME_PAGE_QUERY } from '../../lib/queries'
+import { imgSrc, projectCover169 } from '../../lib/imageUrl'
+import type { Project, SiteSettings, HomePage } from '../../types/sanity'
+
+export async function getStaticPaths() {
+  try {
+    const projects = await sanityClient.fetch<Array<{ _id: string; title?: string; slug?: { current?: string } }>>(
+      `*[_type == "project"]{ _id, title, slug }`
+    )
+    const paths: Array<{ params: { slug: string } }> = []
+    for (const p of projects) {
+      if (p.slug?.current) {
+        paths.push({ params: { slug: p.slug.current } })
+      }
+      if (p.title) {
+        const titleSlug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        if (titleSlug && titleSlug !== p.slug?.current) {
+          paths.push({ params: { slug: titleSlug } })
+        }
+      }
+    }
+    return paths
+  } catch {
+    return []
+  }
+}
+
+const { slug } = Astro.params as { slug: string }
+
+let project: Project | null = null
+let settings: SiteSettings | null = null
+let homePage: HomePage | null = null
+
+try {
+  ;[project, settings, homePage] = await Promise.all([
+    sanityClient.fetch<Project>(PROJECT_BY_SLUG_QUERY, { slug }),
+    sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
+    sanityClient.fetch<HomePage>(HOME_PAGE_QUERY),
+  ])
+} catch {
+  // Sanity fallback
+}
+
+// Fallback search if direct match missed
+if (!project) {
+  try {
+    const all = await sanityClient.fetch<Project[]>(ALL_PROJECTS_QUERY)
+    project = all.find(p => {
+      const s = p.slug?.current || p.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      return s === slug || p._id === slug
+    }) ?? null
+  } catch {}
+}
+
+if (!project) {
+  return Astro.redirect('/projects')
+}
+
+const isSport =
+  project.category?.toLowerCase().includes('sport') ||
+  project.category?.toLowerCase().includes('football') ||
+  project.tags?.some(t => t.toLowerCase().includes('sport') || t.toLowerCase().includes('football'))
+
+const backLink = isSport
+  ? { href: '/sports', label: '← Sports Work' }
+  : { href: '/projects', label: '← All Projects' }
+
+import { projectCover169 } from '../../lib/imageUrl'
+const coverSrc = project.coverImage ? projectCover169(project.coverImage, 1600) : undefined
+
+// Split multi-line shortDescription into paragraphs
+const descriptionParagraphs = project.shortDescription
+  ? project.shortDescription
+      .split(/\n\s*\n/)
+      .map(p => p.trim())
+      .filter(Boolean)
+  : []
+---
+
+<BaseLayout
+  title={project.seoTitle ?? `${project.title} — Ahmed Esseket`}
+  description={project.seoDescription ?? project.shortDescription?.slice(0, 160) ?? `${project.title} — ${project.client}, ${project.year}`}
+  ogImage={coverSrc}
+>
+  <Navbar />
+
+  <main id="main-content" class="project-page">
+    <div class="project-container">
+      <!-- Back navigation -->
+      <div class="project-nav">
+        <a href={backLink.href} class="project-back">
+          {backLink.label}
+        </a>
+      </div>
+
+      <!-- Project Header -->
+      <header class="project-header">
+        <div class="project-meta-badges">
+          {project.category && (
+            <span class="meta-badge meta-badge--category">{project.category}</span>
+          )}
+          {project.client && (
+            <span class="meta-badge">{project.client}</span>
+          )}
+          {project.year && (
+            <span class="meta-badge">{project.year}</span>
+          )}
+          {project.tags?.map(tag => (
+            <span class="meta-badge meta-badge--tag">#{tag}</span>
+          ))}
+        </div>
+
+        <h1 class="project-title">
+          {project.title}
+        </h1>
+
+        <!-- Project Overview / Description from CMS -->
+        {descriptionParagraphs.length > 0 && (
+          <div class="project-overview">
+            <h2 class="project-overview__label section-label">Project Overview</h2>
+            <div class="project-overview__body">
+              {descriptionParagraphs.map(paragraph => {
+                // If line starts with "Project Overview", omit duplicate header
+                if (paragraph.toLowerCase() === 'project overview') return null
+                return <p>{paragraph}</p>
+              })}
+            </div>
+          </div>
+        )}
+      </header>
+
+      <!-- Main Project Cover Visual (Full uncropped aspect ratio) -->
+      {coverSrc && (
+        <div class="project-cover-wrap">
+          <img
+            src={coverSrc}
+            alt={project.title}
+            loading="eager"
+            class="project-cover-img"
+          />
+        </div>
+      )}
+
+      <!-- Page Builder Content (Galleries, Image Grids, etc.) -->
+      {project.content && project.content.length > 0 && (
+        <div class="project-content">
+          <BlockRenderer blocks={project.content} />
+        </div>
+      )}
+    </div>
+
+    <!-- Contact & Brand Slider Section at bottom -->
+    <ContactSection
+      title={homePage?.contactTitle}
+      text={homePage?.contactText}
+      email={homePage?.email ?? settings?.email}
+      socialLinks={homePage?.socialLinks ?? settings?.socialLinks ?? []}
+    />
+  </main>
+
+  <Footer
+    email={settings?.email}
+    socialLinks={settings?.socialLinks ?? []}
+    footerText={settings?.footerText}
+  />
+</BaseLayout>
+
+<style>
+  .project-page {
+    padding-top: 6.5rem;
+    background: var(--color-bg);
+    min-height: 100vh;
+  }
+
+  .project-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem 5rem;
+  }
+
+  /* Back button */
+  .project-nav {
+    margin-bottom: 2rem;
+  }
+
+  .project-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.25s ease, transform 0.25s ease;
+  }
+
+  .project-back:hover {
+    color: var(--color-text);
+    transform: translateX(-4px);
+  }
+
+  /* Header */
+  .project-header {
+    margin-bottom: 3.5rem;
+  }
+
+  .project-meta-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .meta-badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(240, 240, 240, 0.8);
+  }
+
+  .meta-badge--category {
+    background: rgba(29, 99, 237, 0.15);
+    border-color: rgba(29, 99, 237, 0.4);
+    color: #60a5fa;
+  }
+
+  .meta-badge--tag {
+    color: var(--color-muted);
+  }
+
+  .project-title {
+    font-family: 'Pr_1', sans-serif;
+    font-size: clamp(2.4rem, 6.5vw, 5rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin: 0 0 2rem;
+  }
+
+  /* Overview */
+  .project-overview {
+    max-width: 780px;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .project-overview__label {
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .project-overview__body {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: rgba(240, 240, 240, 0.75);
+  }
+
+  .project-overview__body p + p {
+    margin-top: 1.25rem;
+  }
+
+  /* Cover image: 16:9 landscape crop */
+  .project-cover-wrap {
+    max-width: 1120px;
+    margin: 1.5rem auto 2.5rem;
+    border-radius: 0px;
+    overflow: hidden;
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    background: #0d0d0d;
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-cover-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Content blocks */
+  .project-content {
+    margin: 3.5rem auto 6rem;
+  }
+
+  @media (max-width: 768px) {
+    .project-container {
+      padding: 1rem 1.25rem 3.5rem;
+    }
+
+    .project-title {
+      font-size: 2.25rem;
+    }
+
+    .project-cover-wrap {
+      margin: 2rem auto 3rem;
+    }
+  }
+</style>

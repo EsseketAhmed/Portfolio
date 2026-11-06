@@ -1,0 +1,201 @@
+---
+// Section 3 — AI / Beyond Traditional Design
+// Images: /images/gallery/SEC3-1.png … SEC3-9.png
+
+const images = [
+  '/images/gallery/SEC3-1.png',
+  '/images/gallery/SEC3-2.png',
+  '/images/gallery/SEC3-3.png',
+  '/images/gallery/SEC3-4.png',
+  '/images/gallery/SEC3-5.png',
+  '/images/gallery/SEC3-6.png',
+  '/images/gallery/SEC3-7.png',
+  '/images/gallery/SEC3-8.png',
+  '/images/gallery/SEC3-9.png',
+]
+---
+
+<section class="sec3" id="ai-design" aria-label="Thinking beyond traditional design">
+  <div class="sec3__inner">
+
+    <!-- Left — auto-sliding image strip -->
+    <div class="sec3__slider-wrap">
+      <!-- fade edges -->
+      <div class="sec3__fade sec3__fade--top"    aria-hidden="true"></div>
+      <div class="sec3__fade sec3__fade--bottom" aria-hidden="true"></div>
+      <!-- the track duplicated for seamless loop -->
+      <div class="sec3__track" aria-hidden="true">
+        {images.map((src, i) => (
+          <div class="sec3__item">
+            <img
+              src={src}
+              alt={`AI design work ${i + 1}`}
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
+        ))}
+        {/* duplicate for seamless loop */}
+        {images.map((src, i) => (
+          <div class="sec3__item">
+            <img
+              src={src}
+              alt=""
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Right — text -->
+    <div class="sec3__text">
+      <span class="section-label">Creative Philosophy</span>
+
+      <h2 class="sec3__title">
+        THINKING BEYOND<br />
+        <span class="gradient-text">TRADITIONAL DESIGN.</span>
+      </h2>
+
+      <p class="sec3__body">
+        I believe AI is reshaping the creative industry, and I see it as an opportunity
+        rather than a replacement for creativity. I integrate AI into my workflow to
+        explore new possibilities, push visual boundaries and bring ideas to life in
+        ways that weren't possible before.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ── Section wrapper ───────────────────────────────────────── */
+  .sec3 {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem 2.5rem;
+  }
+
+  .sec3__inner {
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    gap: 5rem;
+    align-items: stretch; /* both columns same height so text can center */
+  }
+
+  /* ── Text ──────────────────────────────────────────────────── */
+  .sec3__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
+  .sec3__title {
+    font-family: 'Pr_1', sans-serif;
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .sec3__body {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.85;
+    color: rgba(240, 240, 240, 0.65);
+    margin: 0;
+  }
+
+  /* ── Slider ────────────────────────────────────────────────── */
+  .sec3__slider-wrap {
+    /* height matches roughly the text column height */
+    height: 420px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px;
+  }
+
+  /* fade LEFT & RIGHT — same as marquee */
+  .sec3__fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .sec3__fade--top {
+    left: 0;
+    background: linear-gradient(to right, var(--color-bg) 0%, transparent 100%);
+  }
+
+  .sec3__fade--bottom {
+    right: 0;
+    background: linear-gradient(to left, var(--color-bg) 0%, transparent 100%);
+  }
+
+  /* scrolling track — HORIZONTAL */
+  .sec3__track {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    width: max-content;
+    animation: slideLeft 90s linear infinite;
+    will-change: transform;
+  }
+
+  /* NO pause on hover — continuous */
+
+  /* fixed width per image so multiple fit in frame, height auto = no crop */
+  .sec3__item {
+    width: 360px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .sec3__item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    filter: none;
+  }
+
+  @keyframes slideLeft {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .sec3__track { animation: none; }
+  }
+  @media (max-width: 1024px) {
+    .sec3__inner {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .sec3__slider-wrap {
+      height: 340px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sec3 {
+      padding: 4rem 1.25rem;
+    }
+
+    .sec3__slider-wrap {
+      height: 260px;
+    }
+  }
+</style>

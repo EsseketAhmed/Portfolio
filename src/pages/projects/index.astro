@@ -1,0 +1,54 @@
+---
+import BaseLayout     from '../../layouts/BaseLayout.astro'
+import Navbar          from '../../components/Navbar.astro'
+import Footer          from '../../components/Footer.astro'
+import ProjectsGrid    from '../../components/react/ProjectsGrid'
+import ContactSection  from '../../components/ContactSection.astro'
+
+import { sanityClient }  from '../../lib/sanity'
+import { NON_SPORTS_PROJECTS_QUERY, SITE_SETTINGS_QUERY, HOME_PAGE_QUERY } from '../../lib/queries'
+import type { Project, SiteSettings, HomePage } from '../../types/sanity'
+
+let projects: Project[] = []
+let settings: SiteSettings | null = null
+let homePage: HomePage | null = null
+
+try {
+  ;[projects, settings, homePage] = await Promise.all([
+    sanityClient.fetch<Project[]>(NON_SPORTS_PROJECTS_QUERY),
+    sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
+    sanityClient.fetch<HomePage>(HOME_PAGE_QUERY),
+  ])
+} catch {
+  // Sanity not connected yet
+}
+---
+
+<BaseLayout
+  title="Portfolio — Ahmed Esseket"
+  description="Explore all projects by Ahmed Esseket — sports graphics, football campaigns, visual identities and creative direction."
+>
+  <Navbar />
+
+  <main id="main-content" style="padding-top: 6rem;">
+    <ProjectsGrid
+      client:load
+      projects={projects}
+      title="ALL PROJECTS"
+      filterable
+    />
+
+    <ContactSection
+      title={homePage?.contactTitle}
+      text={homePage?.contactText}
+      email={homePage?.email ?? settings?.email}
+      socialLinks={homePage?.socialLinks ?? settings?.socialLinks ?? []}
+    />
+  </main>
+
+  <Footer
+    email={settings?.email}
+    socialLinks={settings?.socialLinks ?? []}
+    footerText={settings?.footerText}
+  />
+</BaseLayout>

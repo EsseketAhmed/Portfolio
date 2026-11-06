@@ -1,0 +1,160 @@
+---
+import { imgSrc } from '../lib/imageUrl'
+import type { SanityImage } from '../types/sanity'
+
+interface Props {
+  title?: string
+  text?: string
+  images?: SanityImage[]
+}
+
+const { images = [] } = Astro.props
+---
+
+<section class="about-section" id="about" aria-label="About Ahmed Esseket">
+  <div class="about-section__box">
+
+    <!-- Left — text content -->
+    <div class="about-section__text">
+      <span class="section-label">About</span>
+
+      <h2 class="about-section__title">
+        DESIGNING WITH PURPOSE.<br />
+        <span class="gradient-text">CREATING WITH IMPACT.</span>
+      </h2>
+
+      <p class="about-section__lead">
+        I'm Ahmed Esseket, an Art Director and Graphic Designer passionate about visual
+        storytelling, sports culture, and brand identity. I turn ideas into bold visual
+        experiences, combining creativity, strategy, and attention to detail to create
+        work that stands out.
+      </p>
+
+      <p class="about-section__body">
+        From sports campaigns and football graphics to branding and digital experiences,
+        every project is an opportunity to create something distinctive.
+      </p>
+
+      <a href="/contact" class="btn-primary about-section__cta">
+        Let's Work Together ↗
+      </a>
+    </div>
+
+    <!-- Right — photo -->
+    <div class="about-section__photo">
+      <img
+        src="/images/BANNER-HOME-SEC2.jpg"
+        alt="Ahmed Esseket — Art Director & Graphic Designer"
+        loading="lazy"
+      />
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .about-section {
+    padding: 5rem 2.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ── Gradient box ──────────────────────────────────────────── */
+  .about-section__box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #17181b 0%, #222324 100%);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ── Text side ─────────────────────────────────────────────── */
+  .about-section__text {
+    padding: 2rem 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .about-section__text .section-label {
+    display: block;
+  }
+
+  .about-section__title {
+    font-family: 'Pr_1', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .about-section__lead {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    color: rgba(240, 240, 240, 0.8);
+    margin: 0;
+  }
+
+  .about-section__body {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: rgba(240, 240, 240, 0.5);
+    margin: 0;
+  }
+
+  .about-section__cta {
+    display: inline-flex;
+    align-self: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  /* ── Photo side ────────────────────────────────────────────── */
+  .about-section__photo {
+    position: relative;
+    min-height: 520px;
+    overflow: hidden;
+  }
+
+  .about-section__photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .about-section__box {
+      grid-template-columns: 1fr;
+    }
+
+    .about-section__photo {
+      min-height: 380px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .about-section {
+      padding: 3rem 1.25rem;
+    }
+
+    .about-section__text {
+      padding: 2.5rem 1.75rem;
+    }
+
+    .about-section__photo {
+      min-height: 280px;
+    }
+  }
+</style>

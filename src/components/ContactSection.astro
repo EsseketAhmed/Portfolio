@@ -1,0 +1,371 @@
+---
+interface Props {
+  title?: string
+  text?: string
+  email?: string
+  socialLinks?: Array<{ platform: string; url: string; handle?: string }>
+}
+
+const {
+  title = "LET'S TALK ABOUT YOUR PROJECT",
+  text  = "Ready to elevate your brand or club's visual identity? Whether you need sports graphics, a full campaign or a visual identity system, I am here to bring your vision to life.",
+  email = 'hello@ahmedesseket.com',
+  socialLinks = [],
+} = Astro.props
+
+interface LogoItem {
+  name: string
+  src: string
+  width: number
+  height: number
+}
+
+const logos: LogoItem[] = [
+  { name: 'Brand 1', src: '/images/gallery/LOGO-PART-1.webp', width: 115, height: 34 },
+  { name: 'Brand 2', src: '/images/gallery/LOGO-PART-2.png',  width: 105, height: 36 },
+  { name: 'Brand 3', src: '/images/gallery/LOGO-PART-3.png',  width: 120, height: 34 },
+  { name: 'Brand 4', src: '/images/gallery/LOGO-PART-4.png',  width: 38,  height: 42 },
+  { name: 'Brand 5', src: '/images/gallery/LOGO-PART-5.png',  width: 42,  height: 42 },
+]
+
+// Duplicate the 5 logos twice per group (10 logos per group, 20 total) for seamless looping
+const groupLogos = [...logos, ...logos]
+---
+
+<section class="contact-section" id="contact" aria-label="Contact Ahmed Esseket">
+  <div class="contact-section__inner">
+    <!-- Left Column: Content & Actions -->
+    <div class="contact-section__content">
+      <span class="section-label">Get In Touch</span>
+      <h2 class="contact-section__title">
+        {title.split(' ').slice(0, 4).join(' ')}<br />
+        <span class="gradient-text">{title.split(' ').slice(4).join(' ')}</span>
+      </h2>
+      <p class="contact-section__text">{text}</p>
+
+      <div class="contact-section__actions">
+        <a href="/contact" class="btn-primary">
+          Start a Project
+        </a>
+        <a href={`mailto:${email}`} class="contact-section__email">
+          {email}
+        </a>
+      </div>
+
+      {socialLinks.length > 0 && (
+        <div class="contact-section__social">
+          {socialLinks.map(link => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contact-section__social-link"
+              aria-label={link.platform}
+            >
+              <span class="contact-section__social-platform">{link.platform}</span>
+              {link.handle && (
+                <span class="contact-section__social-handle">{link.handle}</span>
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Right Column: Trusted by Slider (contained, not full-width) -->
+    <div class="contact-section__trusted" aria-label="Trusted by">
+      <p class="contact-section__trusted-label section-label">Trusted by</p>
+
+      <div class="contact-trusted__slider">
+        <div class="contact-trusted__track">
+          <!-- Group 1 -->
+          <div class="contact-trusted__group" aria-hidden="false">
+            {groupLogos.map((logo, index) => (
+              <div class="contact-trusted__item">
+                <span
+                  class="contact-trusted__logo"
+                  style={`--logo-url: url('${logo.src}'); --logo-w: ${Math.round(logo.width * 1.3)}px; --logo-h: ${Math.round(logo.height * 1.3)}px; --idx: ${index};`}
+                  role="img"
+                  aria-label={logo.name}
+                />
+              </div>
+            ))}
+          </div>
+
+          <!-- Group 2 for seamless loop -->
+          <div class="contact-trusted__group" aria-hidden="true">
+            {groupLogos.map((logo, index) => (
+              <div class="contact-trusted__item">
+                <span
+                  class="contact-trusted__logo"
+                  style={`--logo-url: url('${logo.src}'); --logo-w: ${Math.round(logo.width * 1.3)}px; --logo-h: ${Math.round(logo.height * 1.3)}px; --idx: ${index};`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 6rem 2.5rem 4rem;
+  }
+
+  .contact-section__inner {
+    display: grid;
+    grid-template-columns: 1fr minmax(280px, 440px);
+    gap: 4rem 5rem;
+    align-items: center;
+  }
+
+  .contact-section__content .section-label {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .contact-section__title {
+    font-family: 'Pr_1', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.75rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
+    max-width: 640px;
+  }
+
+  .contact-section__text {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    color: rgba(240, 240, 240, 0.6);
+    margin-bottom: 2.5rem;
+    max-width: 500px;
+  }
+
+  .contact-section__actions {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-section__email {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+    transition: color 0.25s ease;
+  }
+
+  .contact-section__email:hover {
+    color: var(--color-text);
+  }
+
+  .contact-section__social {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .contact-section__social-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: opacity 0.25s ease;
+  }
+
+  .contact-section__social-link:hover {
+    opacity: 0.7;
+  }
+
+  .contact-section__social-platform {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .contact-section__social-handle {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.8rem;
+    color: var(--color-text);
+  }
+
+  /* ─── Right Column: Trusted by Contained Slider ─── */
+  .contact-section__trusted {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  .contact-section__trusted-label {
+    letter-spacing: 0.2em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Slider container with black gradient fade on both sides */
+  .contact-trusted__slider {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 440px;
+    padding: 1rem 0;
+    cursor: default;
+  }
+
+  .contact-trusted__slider::before,
+  .contact-trusted__slider::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: clamp(40px, 18%, 80px);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .contact-trusted__slider::before {
+    left: 0;
+    background: linear-gradient(
+      to right,
+      #090909 0%,
+      rgba(9, 9, 9, 0.95) 25%,
+      rgba(9, 9, 9, 0.5) 65%,
+      transparent 100%
+    );
+  }
+
+  .contact-trusted__slider::after {
+    right: 0;
+    background: linear-gradient(
+      to left,
+      #090909 0%,
+      rgba(9, 9, 9, 0.95) 25%,
+      rgba(9, 9, 9, 0.5) 65%,
+      transparent 100%
+    );
+  }
+
+  /* Marquee track */
+  .contact-trusted__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: contactMarquee 22s linear infinite;
+    will-change: transform;
+    pointer-events: auto;
+  }
+
+  /* CRITICAL: Never pause on hover, cursor or focus */
+  .contact-section__trusted:hover .contact-trusted__track,
+  .contact-trusted__slider:hover .contact-trusted__track,
+  .contact-trusted__track:hover,
+  .contact-trusted__group:hover,
+  .contact-trusted__item:hover {
+    animation-play-state: running !important;
+  }
+
+  .contact-trusted__group {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .contact-trusted__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.25rem;
+    flex-shrink: 0;
+  }
+
+  /* Iridescent moving text gradient applied to each logo */
+  .contact-trusted__logo {
+    display: block;
+    width: var(--logo-w, 110px);
+    height: var(--logo-h, 40px);
+    background: var(--gradient-iridescent);
+    background-size: 300% 300%;
+    animation: gradientShift 8s ease infinite;
+    animation-delay: calc(var(--idx, 0) * -0.9s);
+    -webkit-mask-image: var(--logo-url);
+    mask-image: var(--logo-url);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    opacity: 0.85;
+    transition: transform 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
+  }
+
+  .contact-trusted__item:hover .contact-trusted__logo {
+    opacity: 1;
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 14px rgba(182, 136, 231, 0.6)) brightness(1.2);
+  }
+
+  @keyframes contactMarquee {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes gradientShift {
+    0%   { background-position: 0%   50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-trusted__track {
+      animation: none;
+      flex-wrap: wrap;
+    }
+
+    .contact-trusted__logo {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .contact-section__inner {
+      grid-template-columns: 1fr;
+      gap: 3.5rem;
+    }
+
+    .contact-trusted__slider {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .contact-section {
+      padding: 4rem 1.25rem 3rem;
+    }
+
+    .contact-trusted__item {
+      padding: 0 0.85rem;
+    }
+
+    .contact-trusted__logo {
+      transform: scale(0.9);
+    }
+  }
+</style>

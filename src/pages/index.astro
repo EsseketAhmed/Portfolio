@@ -1,0 +1,123 @@
+---
+import BaseLayout   from '../layouts/BaseLayout.astro'
+import Navbar        from '../components/Navbar.astro'
+import Footer        from '../components/Footer.astro'
+import AboutSection  from '../components/AboutSection.astro'
+import SocialSection from '../components/SocialSection.astro'
+import ContactSection from '../components/ContactSection.astro'
+import Hero          from '../components/react/Hero'
+import MarqueeGallery from '../components/react/MarqueeGallery'
+import ProjectsGrid  from '../components/react/ProjectsGrid'
+import FaqAccordion  from '../components/react/FaqAccordion'
+
+import { sanityClient }      from '../lib/sanity'
+import { HOME_PAGE_QUERY, LATEST_PROJECTS_QUERY, FAQ_QUERY, SITE_SETTINGS_QUERY } from '../lib/queries'
+import type { HomePage, Project, Faq, SiteSettings } from '../types/sanity'
+
+// Chrome PNG assets (served from public/ at build time)
+const chrome1 = '/images/Hero_Chrome_1.png'
+const chrome2 = '/images/Hero_Chrome_2.png'
+const chrome3 = '/images/Hero_Chrome_3.png'
+
+// Fetch from Sanity — gracefully fall back to undefined/empty when no project ID yet
+let homePage: HomePage | null = null
+let projects: Project[] = []
+let faqs: Faq[] = []
+let settings: SiteSettings | null = null
+
+try {
+  ;[homePage, projects, faqs, settings] = await Promise.all([
+    sanityClient.fetch<HomePage>(HOME_PAGE_QUERY),
+    sanityClient.fetch<Project[]>(LATEST_PROJECTS_QUERY),
+    sanityClient.fetch<Faq[]>(FAQ_QUERY),
+    sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
+  ])
+} catch {
+  // Sanity not connected yet — all sections will use fallback content
+}
+---
+
+<BaseLayout
+  title={settings?.siteName ? `${settings.siteName} — Graphic Designer & Art Director` : 'Ahmed Esseket — Graphic Designer & Art Director'}
+  description={settings?.seoDescription ?? 'Ahmed Esseket is a graphic designer and art director specialising in sports graphics, football campaigns, visual identities and digital visual storytelling.'}
+>
+  <Navbar />
+
+  <main id="main-content">
+    <!-- SECTION 01 — HERO -->
+    <Hero
+      client:load
+      intro={homePage?.heroIntro}
+      headline={homePage?.heroHeadline}
+      highlights={homePage?.heroHighlightedWords}
+      cta1Label={homePage?.heroCta1Label}
+      cta1Link={homePage?.heroCta1Link}
+      cta2Label={homePage?.heroCta2Label}
+      cta2Link={homePage?.heroCta2Link}
+      chrome1Src={chrome1}
+      chrome2Src={chrome2}
+      chrome3Src={chrome3}
+    />
+
+    <!-- SECTION 02 — HORIZONTAL GALLERY -->
+    <MarqueeGallery
+      client:visible
+      images={homePage?.galleryImages ?? []}
+      localImages={[
+        '/images/gallery/WORK-1.webp',
+        '/images/gallery/WORK-2.webp',
+        '/images/gallery/WORK-3.webp',
+        '/images/gallery/WORK-4.webp',
+        '/images/gallery/WORK-5.webp',
+        '/images/gallery/WORK-6.webp',
+        '/images/gallery/WORK-7.webp',
+        '/images/gallery/WORK-8.webp',
+        '/images/gallery/WORK-9.webp',
+        '/images/gallery/WORK-10.webp',
+        '/images/gallery/WORK-11.webp',
+      ]}
+      label=""
+    />
+
+    <!-- SECTION 03 — ABOUT -->
+    <AboutSection
+      title={homePage?.aboutTitle}
+      text={homePage?.aboutText}
+      images={homePage?.aboutImages ?? []}
+    />
+
+    <!-- SECTION 04 — SOCIAL / INSTAGRAM -->
+    <SocialSection
+      title={homePage?.socialTitle}
+      text={homePage?.socialText}
+      images={homePage?.socialImages ?? []}
+    />
+
+    <!-- SECTION 05 — LATEST PROJECTS -->
+    <ProjectsGrid
+      client:visible
+      projects={projects}
+      title={homePage?.projectsSectionTitle}
+    />
+
+    <!-- SECTION 06 — FAQ -->
+    <FaqAccordion
+      client:visible
+      faqs={faqs}
+    />
+
+    <!-- SECTION 07 — CONTACT -->
+    <ContactSection
+      title={homePage?.contactTitle}
+      text={homePage?.contactText}
+      email={homePage?.email ?? settings?.email}
+      socialLinks={homePage?.socialLinks ?? settings?.socialLinks ?? []}
+    />
+  </main>
+
+  <Footer
+    email={homePage?.email ?? settings?.email}
+    socialLinks={homePage?.socialLinks ?? settings?.socialLinks ?? []}
+    footerText={homePage?.footerText ?? settings?.footerText}
+  />
+</BaseLayout>

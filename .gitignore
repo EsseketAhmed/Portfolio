@@ -1,6 +1,30 @@
+# Dependencies
 node_modules/
-dist/
-.astro/
-.env
 studio/node_modules/
-studio/.sanity/
+
+# Build output
+dist/
+studio/dist/
+.astro/
+
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.production
+studio/.env
+studio/.env.local
+
+# Sanity
+.sanity/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

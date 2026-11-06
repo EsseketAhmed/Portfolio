@@ -1,0 +1,354 @@
+---
+import { imgSrc, imgSrcSet } from '../../lib/imageUrl'
+import type { ContentBlock } from '../../types/sanity'
+
+interface Props {
+  blocks: ContentBlock[]
+}
+
+const { blocks = [] } = Astro.props
+
+function spacerClass(size: string) {
+  switch (size) {
+    case 'sm': return 'spacer--sm'
+    case 'lg': return 'spacer--lg'
+    case 'xl': return 'spacer--xl'
+    default:   return 'spacer--md'
+  }
+}
+
+function dividerClass(style: string | undefined) {
+  switch (style) {
+    case 'gradient':   return 'divider--gradient'
+    case 'invisible':  return 'divider--invisible'
+    default:           return 'divider--line'
+  }
+}
+
+function gridColClass(cols: number) {
+  switch (cols) {
+    case 2:  return 'img-grid--2'
+    case 3:  return 'img-grid--3'
+    case 4:  return 'img-grid--4'
+    case 5:  return 'img-grid--5'
+    default: return 'img-grid--3'
+  }
+}
+---
+
+<div class="block-renderer">
+  {blocks.map(block => {
+    switch (block._type) {
+
+      case 'headingBlock':
+        const Tag = block.level ?? 'h2'
+        return (
+          <div class="block-heading">
+            <Tag class:list={['block-heading__text', { 'gradient-text': block.gradient }]}>
+              {block.text}
+            </Tag>
+          </div>
+        )
+
+      case 'richTextBlock':
+        return (
+          <div class="block-richtext">
+            {block.content?.map(pt => (
+              <p>{pt.children?.map(child => child.text).join('')}</p>
+            ))}
+          </div>
+        )
+
+      case 'fullWidthImageBlock':
+        return (
+          <div class="block-full-image">
+            <img
+              src={imgSrc(block.image, 1600)}
+              srcset={imgSrcSet(block.image, [800, 1200, 1600, 2000])}
+              sizes="100vw"
+              alt={block.alt ?? ''}
+              loading="lazy"
+            />
+            {block.caption && <p class="block-caption">{block.caption}</p>}
+          </div>
+        )
+
+      case 'singleImageBlock':
+        return (
+          <div class:list={['block-single-image', block.layout === 'full' ? 'block-single-image--full' : '']}>
+            <img
+              src={imgSrc(block.image, 1200)}
+              srcset={imgSrcSet(block.image)}
+              sizes="(max-width: 768px) 100vw, 80vw"
+              alt={block.alt ?? ''}
+              loading="lazy"
+            />
+            {block.caption && <p class="block-caption">{block.caption}</p>}
+          </div>
+        )
+
+      case 'imageGridBlock':
+        return (
+          <div class:list={['block-img-grid img-grid', gridColClass(block.columns ?? 3)]}>
+            {block.images?.map((img, i) => (
+              <div class="img-grid__item">
+                <img
+                  src={imgSrc(img, 800)}
+                  srcset={imgSrcSet(img)}
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                  alt={(img as any).alt ?? `Image ${i + 1}`}
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        )
+
+      case 'imageGalleryBlock':
+        const galleryCols = block.images?.length === 2 ? 'img-grid--2' : (block.images?.length === 4 ? 'img-grid--2' : 'img-grid--3')
+        return (
+          <div class:list={['block-gallery img-grid', galleryCols]}>
+            {block.images?.map((img, i) => (
+              <div class="img-grid__item">
+                <img
+                  src={imgSrc(img, 1200)}
+                  alt={(img as any).alt ?? `Gallery ${i + 1}`}
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        )
+
+      case 'marqueeGalleryBlock':
+        return (
+          <div class="block-marquee">
+            <div class="marquee-wrapper" aria-hidden="true">
+              <div class="marquee-track">
+                {[...(block.images ?? []), ...(block.images ?? [])].map((img, i) => (
+                  <div class="marquee-item">
+                    <img src={imgSrc(img, 600)} alt="" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'twoColumnSplitBlock':
+        return (
+          <div class="block-split">
+            <div class="block-split__col">
+              {block.leftType === 'image' && block.leftImage ? (
+                <img src={imgSrc(block.leftImage, 900)} alt="" loading="lazy" />
+              ) : (
+                <div class="block-richtext">
+                  {block.leftText?.map(pt => (
+                    <p>{pt.children?.map(c => c.text).join('')}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div class="block-split__col">
+              {block.rightType === 'image' && block.rightImage ? (
+                <img src={imgSrc(block.rightImage, 900)} alt="" loading="lazy" />
+              ) : (
+                <div class="block-richtext">
+                  {block.rightText?.map(pt => (
+                    <p>{pt.children?.map(c => c.text).join('')}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )
+
+      case 'threeColumnLayoutBlock':
+        return (
+          <div class="block-three-col">
+            {block.columns?.map((col, i) => (
+              <div class="block-three-col__item" key={col._key ?? i}>
+                {col.image && (
+                  <img src={imgSrc(col.image, 700)} alt="" loading="lazy" />
+                )}
+                {col.text && (
+                  <div class="block-richtext">
+                    {col.text.map(pt => (
+                      <p>{pt.children?.map(c => c.text).join('')}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )
+
+      case 'spacerBlock':
+        return <div class:list={['block-spacer', spacerClass(block.size)]} aria-hidden="true" />
+
+      case 'dividerBlock':
+        return <div class:list={['block-divider', dividerClass(block.style)]} aria-hidden="true" />
+
+      default:
+        return null
+    }
+  })}
+</div>
+
+<style>
+  .block-renderer > * + * {
+    margin-top: 2rem;
+  }
+
+  /* Heading */
+  .block-heading {
+    padding: 1rem 0;
+  }
+
+  .block-heading__text {
+    font-family: 'Pr_1', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* Rich text */
+  .block-richtext {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(240, 240, 240, 0.75);
+    max-width: 680px;
+  }
+
+  .block-richtext p + p { margin-top: 1rem; }
+
+  /* Images */
+  .block-full-image,
+  .block-single-image {
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .block-full-image {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
+
+  .block-full-image img,
+  .block-single-image img,
+  .block-split img,
+  .block-three-col img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 2px;
+  }
+
+  .block-single-image--full {
+    width: 100%;
+  }
+
+  .block-caption {
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    margin-top: 0.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Image Grid */
+  .img-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .img-grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .img-grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .img-grid--4 { grid-template-columns: repeat(4, 1fr); }
+  .img-grid--5 { grid-template-columns: repeat(5, 1fr); }
+
+  .img-grid__item {
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #0d0d0d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.35s ease;
+  }
+
+  .img-grid__item:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .img-grid__item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* Split */
+  .block-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .block-split__col {
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  /* Three col */
+  .block-three-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .block-three-col__item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Spacer */
+  .block-spacer { display: block; }
+  .block-spacer--sm  { height: 2rem; }
+  .block-spacer--md  { height: 4rem; }
+  .block-spacer--lg  { height: 6rem; }
+  .block-spacer--xl  { height: 10rem; }
+
+  /* Divider */
+  .block-divider { height: 1px; }
+  .block-divider--line      { background: var(--color-border); }
+  .block-divider--gradient  { background: var(--gradient-iridescent); background-size: 200% 100%; }
+  .block-divider--invisible { background: transparent; }
+
+  /* Marquee inside block */
+  .block-marquee {
+    overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .img-grid--3,
+    .img-grid--4,
+    .img-grid--5 { grid-template-columns: repeat(2, 1fr); }
+    .block-split  { grid-template-columns: 1fr; }
+    .block-three-col { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .img-grid--2,
+    .img-grid--3,
+    .img-grid--4,
+    .img-grid--5 { grid-template-columns: 1fr; }
+    .block-three-col { grid-template-columns: 1fr; }
+  }
+</style>

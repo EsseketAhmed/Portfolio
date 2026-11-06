@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Navbar      from '../components/Navbar.astro'
+import Footer      from '../components/Footer.astro'
+---
+
+<BaseLayout title="Legal Notice — Ahmed Esseket">
+  <Navbar />
+  <main id="main-content" class="legal-page">
+    <h1 class="legal-page__title">Legal Notice</h1>
+    <div class="legal-page__content">
+      <p>This website is owned and operated by <strong>Ahmed Esseket</strong>.</p>
+      <p>All content, images, and designs displayed on this website are the intellectual property of Ahmed Esseket and may not be reproduced, distributed, or used without prior written permission.</p>
+      <p>For enquiries, please contact: <a href="mailto:hello@ahmedesseket.com">hello@ahmedesseket.com</a></p>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .legal-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 8rem 2.5rem 5rem;
+  }
+
+  .legal-page__title {
+    font-family: 'Pr_1', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-bottom: 2.5rem;
+    color: var(--color-text);
+  }
+
+  .legal-page__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    font-family: 'Pr_2', sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    color: rgba(240, 240, 240, 0.65);
+  }
+
+  .legal-page__content a {
+    color: var(--color-lavender);
+    transition: color 0.2s ease;
+  }
+
+  .legal-page__content a:hover {
+    color: var(--color-pearl);
+  }
+</style>
