@@ -269,10 +269,9 @@ const descriptionParagraphs = project.shortDescription
   }
 
   .project-overview__body {
-    max-width: 680px;
     font-family: 'Pr_2', sans-serif;
-    font-size: 1.6rem;
-    line-height: 1.65;
+    font-size: 1.05rem;
+    line-height: 1.85;
     color: rgba(240, 240, 240, 0.75);
   }
 
@@ -302,7 +301,8 @@ const descriptionParagraphs = project.shortDescription
 
   /* Content blocks */
   .project-content {
-    margin: 3.5rem auto 6rem;
+    width: 100vw;
+    margin: 3.5rem 0 6rem calc(50% - 50vw);
   }
 
   @media (max-width: 768px) {

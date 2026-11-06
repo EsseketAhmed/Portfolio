@@ -202,7 +202,7 @@ function gridColClass(cols: number) {
 
   /* Heading */
   .block-heading {
-    padding: 1rem 0;
+    padding: 1rem clamp(1.25rem, 5vw, 4rem);
   }
 
   .block-heading__text {
@@ -217,10 +217,10 @@ function gridColClass(cols: number) {
   /* Rich text */
   .block-richtext {
     font-family: 'Pr_2', sans-serif;
-    font-size: 1rem;
+    font-size: 1.5rem;
     line-height: 1.8;
     color: rgba(240, 240, 240, 0.75);
-    max-width: 680px;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
   }
 
   .block-richtext p + p { margin-top: 1rem; }
