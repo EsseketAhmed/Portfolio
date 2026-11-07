@@ -325,6 +325,7 @@ const descriptionParagraphs = project.shortDescription
   .project-pdf__actions {
     display: grid;
     grid-template-columns: repeat(2, max-content);
+    width: 100%;
     gap: 0.75rem;
   }
 
@@ -336,6 +337,7 @@ const descriptionParagraphs = project.shortDescription
 
   .project-pdf__preview {
     grid-column: 1 / -1;
+    width: 100%;
   }
 
   .project-pdf__preview summary {
@@ -357,7 +359,7 @@ const descriptionParagraphs = project.shortDescription
   }
 
   .project-pdf__frame {
-    width: min(100%, 1000px);
+    width: 100%;
     height: min(80vh, 900px);
     min-height: 28rem;
     margin-top: 1rem;
