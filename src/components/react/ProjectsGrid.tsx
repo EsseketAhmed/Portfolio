@@ -13,7 +13,7 @@ const projectFilters = [
   { id: 'identity', label: 'Visual Identity', categories: ['Visual Identity'] },
   { id: 'advertising', label: 'Advertising', categories: ['Advertising'] },
   { id: 'creative', label: 'Creative Direction', categories: ['Creative Direction'] },
-  { id: 'storytelling', label: 'Digital Storytelling', categories: ['Digital Storytelling'] },
+  { id: 'social-media', label: 'Social Media Design', categories: ['Social Media Design'] },
 ] as const
 
 type ProjectFilter = typeof projectFilters[number]['id']

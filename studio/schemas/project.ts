@@ -75,7 +75,7 @@ export const project = defineType({
           { title: 'Visual Identity',      value: 'Visual Identity' },
           { title: 'Advertising',          value: 'Advertising' },
           { title: 'Creative Direction',   value: 'Creative Direction' },
-          { title: 'Digital Storytelling', value: 'Digital Storytelling' },
+          { title: 'Social Media Design',  value: 'Social Media Design' },
         ],
       },
     }),
