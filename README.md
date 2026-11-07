@@ -176,6 +176,8 @@ Output is in `dist/`. Deploy to Cloudflare Pages by connecting your GitHub repo 
 
 Mix these in any order. Drag to reorder. No limit on number of blocks.
 
+Projects also have an optional **Project PDF** file field in Sanity. Upload a PDF there to show download and in-page preview controls on that project's page.
+
 ---
 
 ## Notes

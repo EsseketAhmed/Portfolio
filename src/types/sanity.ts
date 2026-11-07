@@ -15,6 +15,14 @@ export interface SanityImage {
   caption?: string
 }
 
+export interface SanityFile {
+  asset?: {
+    url?: string
+    originalFilename?: string
+    mimeType?: string
+  }
+}
+
 // ─── Sanity Slug ─────────────────────────────────────────────────────
 export interface SanitySlug {
   _type: 'slug'
@@ -146,6 +154,7 @@ export interface Project {
   client: string
   year: number
   coverImage: SanityImage
+  pdf?: SanityFile
   slug?: SanitySlug
   shortDescription?: string
   category?: string

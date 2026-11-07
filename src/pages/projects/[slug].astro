@@ -7,7 +7,7 @@ import ContactSection  from '../../components/ContactSection.astro'
 
 import { sanityClient } from '../../lib/sanity'
 import { PROJECT_BY_SLUG_QUERY, ALL_PROJECTS_QUERY, SITE_SETTINGS_QUERY, HOME_PAGE_QUERY } from '../../lib/queries'
-import { imgSrc, projectCover169 } from '../../lib/imageUrl'
+import { projectCover169 } from '../../lib/imageUrl'
 import type { Project, SiteSettings, HomePage } from '../../types/sanity'
 
 export async function getStaticPaths() {
@@ -53,10 +53,14 @@ try {
 if (!project) {
   try {
     const all = await sanityClient.fetch<Project[]>(ALL_PROJECTS_QUERY)
-    project = all.find(p => {
+    const matchedProject = all.find(p => {
       const s = p.slug?.current || p.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
       return s === slug || p._id === slug
-    }) ?? null
+    })
+    if (matchedProject) {
+      project = await sanityClient.fetch<Project | null>(PROJECT_BY_SLUG_QUERY, { slug: matchedProject._id })
+        ?? matchedProject
+    }
   } catch {}
 }
 
@@ -73,8 +77,15 @@ const backLink = isSport
   ? { href: '/sports', label: '← Sports Work' }
   : { href: '/projects', label: '← All Projects' }
 
-import { projectCover169 } from '../../lib/imageUrl'
 const coverSrc = project.coverImage ? projectCover169(project.coverImage, 1600) : undefined
+const pdfAsset = project.pdf?.asset
+const pdfUrl = pdfAsset?.url
+const pdfFilename = pdfAsset?.originalFilename ?? `${project.title}.pdf`
+const hasPdf = Boolean(
+  pdfUrl &&
+  (pdfAsset?.mimeType === 'application/pdf' || pdfFilename.toLowerCase().endsWith('.pdf'))
+)
+const pdfDownloadUrl = pdfUrl ? `${pdfUrl}?dl=${encodeURIComponent(pdfFilename)}` : undefined
 
 // Split multi-line shortDescription into paragraphs
 const descriptionParagraphs = project.shortDescription
@@ -136,6 +147,37 @@ const descriptionParagraphs = project.shortDescription
           </div>
         )}
       </header>
+
+      {hasPdf && pdfUrl && pdfDownloadUrl && (
+        <section class="project-pdf" aria-label="Project PDF">
+          <div class="project-pdf__info">
+            <span class="section-label">Project PDF</span>
+            <p>{pdfFilename}</p>
+          </div>
+          <div class="project-pdf__actions">
+            <a
+              class="btn-secondary project-pdf__button"
+              href={pdfDownloadUrl}
+              download={pdfFilename}
+            >
+              Download PDF
+            </a>
+            <details class="project-pdf__preview">
+              <summary class="btn-primary project-pdf__button">
+                <span>Preview PDF</span>
+                <span class="project-pdf__close-label">Close Preview</span>
+              </summary>
+              <div class="project-pdf__frame">
+                <iframe
+                  src={pdfUrl}
+                  title={`Preview of ${project.title} PDF`}
+                  loading="lazy"
+                />
+              </div>
+            </details>
+          </div>
+        </section>
+      )}
 
       <!-- Main Project Cover Visual (Full uncropped aspect ratio) -->
       {coverSrc && (
@@ -256,6 +298,81 @@ const descriptionParagraphs = project.shortDescription
     margin: 0 0 2rem;
   }
 
+  .project-pdf {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin: -1rem 0 2.5rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .project-pdf__info .section-label {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .project-pdf__info p {
+    margin: 0;
+    color: rgba(240, 240, 240, 0.75);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+  }
+
+  .project-pdf__actions {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 0.75rem;
+  }
+
+  .project-pdf__button {
+    min-height: 2.75rem;
+    justify-content: center;
+    padding: 0.7rem 1.25rem;
+  }
+
+  .project-pdf__preview {
+    grid-column: 1 / -1;
+  }
+
+  .project-pdf__preview summary {
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .project-pdf__preview summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .project-pdf__close-label,
+  .project-pdf__preview[open] summary > span:first-child {
+    display: none;
+  }
+
+  .project-pdf__preview[open] .project-pdf__close-label {
+    display: inline;
+  }
+
+  .project-pdf__frame {
+    width: min(100%, 1000px);
+    height: min(80vh, 900px);
+    min-height: 28rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #111;
+  }
+
+  .project-pdf__frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
   /* Overview */
   .project-overview {
     max-width: 780px;
@@ -311,6 +428,21 @@ const descriptionParagraphs = project.shortDescription
 
     .project-title {
       font-size: 2.25rem;
+    }
+
+    .project-pdf {
+      align-items: flex-start;
+      margin-top: -1rem;
+    }
+
+    .project-pdf__actions {
+      width: 100%;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .project-pdf__frame {
+      height: 65vh;
+      min-height: 24rem;
     }
 
     .project-cover-wrap {

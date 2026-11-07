@@ -100,6 +100,7 @@ export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && (
   client,
   year,
   coverImage{ ..., asset-> },
+  pdf{ ..., asset->{ url, originalFilename, mimeType } },
   slug,
   shortDescription,
   category,

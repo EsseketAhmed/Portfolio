@@ -56,6 +56,13 @@ export const project = defineType({
       description: 'A brief summary shown on project cards',
     }),
     defineField({
+      name: 'pdf',
+      title: 'Project PDF',
+      type: 'file',
+      description: 'Optional PDF shown on the project page with preview and download actions.',
+      options: { accept: 'application/pdf' },
+    }),
+    defineField({
       name: 'category',
       title: 'Category',
       type: 'string',
