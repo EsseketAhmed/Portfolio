@@ -452,6 +452,8 @@
   overflow: hidden;
   cursor: default;
   position: relative;
+  width: 100%;
+  min-width: 0;
 }
 
 .marquee-wrapper::before,

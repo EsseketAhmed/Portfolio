@@ -79,7 +79,7 @@ const images = [
 
   .sec3__inner {
     display: grid;
-    grid-template-columns: 2fr 2fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 5rem;
     align-items: stretch; /* both columns same height so text can center */
   }
@@ -115,6 +115,7 @@ const images = [
   .sec3__slider-wrap {
     /* height matches roughly the text column height */
     height: 420px;
+    min-width: 0;
     overflow: hidden;
     position: relative;
     border-radius: 4px;
@@ -180,7 +181,7 @@ const images = [
   }
   @media (max-width: 1024px) {
     .sec3__inner {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 3rem;
     }
 
