@@ -59,16 +59,20 @@ const showIntro = Astro.url.pathname === '/'
     {showIntro && (
       <>
         <div id="site-loader" class="site-loader" aria-hidden="true">
-          <div class="site-loader__glow">
-            <img src="/images/LOGO_ESSEKET.png" alt="" />
+          <div class="site-loader__scene">
+            <div class="site-loader__ring"></div>
+            <div class="site-loader__logo">
+              <span class="site-loader__extrusion"></span>
+              <span class="brand-mark"></span>
+            </div>
           </div>
-          <div class="site-loader__progress"></div>
+          <span class="site-loader__caption">Ahmed Esseket</span>
         </div>
         <script is:inline>
           const loader = document.getElementById('site-loader')
           if (loader) {
             const introStartedAt = performance.now()
-            const minimumDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000
+            const minimumDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1800
 
             const hideLoader = () => {
               const delay = Math.max(0, minimumDuration - (performance.now() - introStartedAt))

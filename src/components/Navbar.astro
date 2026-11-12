@@ -12,7 +12,7 @@ const currentPath = Astro.url.pathname
 <header id="navbar" class="navbar">
   <!-- Logo -->
   <a href="/" class="navbar__logo" aria-label="Ahmed Esseket — Home">
-    <img src="/images/LOGO_ESSEKET.png" alt="" />
+    <span class="brand-mark" aria-hidden="true"></span>
   </a>
 
   <!-- Desktop nav -->
@@ -82,13 +82,8 @@ const currentPath = Astro.url.pathname
 
   .navbar__logo {
     display: block;
-    width: clamp(140px, 13vw, 190px);
+    width: clamp(150px, 15vw, 220px);
     flex-shrink: 0;
-  }
-
-  .navbar__logo img {
-    width: 100%;
-    height: auto;
   }
 
   .navbar__links {
